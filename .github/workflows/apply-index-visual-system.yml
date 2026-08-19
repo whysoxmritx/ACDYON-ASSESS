@@ -1,0 +1,98 @@
+name: Apply visual system to index
+
+on:
+  push:
+    branches: [main]
+
+permissions:
+  contents: write
+
+jobs:
+  style-index:
+    if: ${{ !contains(github.event.head_commit.message, 'chore: apply index visual system') }}
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Update index visual styling only
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+          import re
+
+          path = Path('index.html')
+          html = path.read_text(encoding='utf-8')
+
+          css = r'''<style id="synapse-visual-system">
+          @import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap');
+          :root{
+            --paper:#EBEAE2;--paper-line:#D6D4C6;--ink:#14161C;--graphite:#5B5D64;
+            --highlighter:#D4FF3F;--highlighter-ink:#1F2400;--indigo:#3B2FC9;--white:#FAFAF6;
+            --bg:var(--paper);--paper-bg:var(--white);--muted:var(--graphite);--line:var(--paper-line);--accent:var(--indigo);--accent2:#EEF0D1;--green:var(--indigo);--shadow:none;
+          }
+          html{background:var(--paper);max-width:100%;overflow-x:hidden}
+          body{background-color:var(--paper);background-image:linear-gradient(var(--paper-line) 1px,transparent 1px),linear-gradient(90deg,var(--paper-line) 1px,transparent 1px);background-size:28px 28px;color:var(--ink);font-family:'Inter',sans-serif;max-width:100%;overflow-x:hidden}
+          ::selection{background:var(--highlighter);color:var(--highlighter-ink)}
+          h1,h2,h3,.brand,.section-title,.finalbox h2,.side h2{font-family:'Space Grotesk',sans-serif}
+          button,a{font-family:'Inter',sans-serif}
+          .mono,.windowbar,.live,.eyebrow,.label,.stat small,.step-num,.step-tag,.footer,.toast{font-family:'IBM Plex Mono',monospace}
+          .mono{font-weight:500}
+          .nav{background:rgba(235,234,226,.92);border-color:var(--paper-line)}
+          .brand{font-weight:700;color:var(--ink)}
+          .navlinks{color:var(--graphite)}
+          .navlinks a:hover{color:var(--indigo)}
+          .navbtn,.cta{border-radius:2px;box-shadow:none}
+          .navbtn{background:var(--ink);border-color:var(--ink);color:var(--white)}
+          .navbtn:hover,.cta:hover{background:var(--highlighter);border-color:var(--ink);color:var(--highlighter-ink)}
+          .cta{background:var(--ink);color:var(--white)}
+          .eyebrow{color:var(--indigo)}
+          .hero h1 em,.section-title em{font-style:normal;color:var(--ink)!important;background-image:linear-gradient(transparent 60%,var(--highlighter) 60%,var(--highlighter) 100%);background-size:100% 100%;background-repeat:no-repeat}
+          .hero-copy p,.copy,.hero p,.step p,.cap-card p,.finalbox p,.side p{color:var(--graphite)}
+          .signal{color:var(--graphite)}
+          .signal i{background:var(--indigo);border-radius:0}
+          .window,.cap-card,.paper,.compare-panel,.finalbox,.stat,.chip,.ghost{background:var(--white);border-color:var(--paper-line);box-shadow:none}
+          .window{border-radius:2px}
+          .windowbar{border-color:var(--paper-line);color:var(--graphite)}
+          .windowbar .live{color:var(--indigo)}
+          .graph{background-color:var(--white);background-image:linear-gradient(var(--paper-line) 1px,transparent 1px),linear-gradient(90deg,var(--paper-line) 1px,transparent 1px);background-size:28px 28px}
+          .node{background:var(--white);border-color:var(--paper-line);border-radius:2px;box-shadow:none}
+          .node:hover,.node.active{border-color:var(--indigo);box-shadow:inset 0 -3px var(--highlighter),none;transform:translate(-50%,-50%)}
+          .node.active:after{border-radius:0;border-color:var(--indigo)}
+          .node small,.stat small,.label{color:var(--graphite)}
+          .side{border-color:var(--paper-line);background:var(--white)}
+          .stat{border-radius:2px}
+          .chip,.ghost,.paper{border-radius:2px}
+          .chip:hover,.paper:hover{border-color:var(--indigo)}
+          .paper.selected{border-color:var(--indigo);background:#F3F5DD;box-shadow:inset 3px 0 var(--highlighter)}
+          .gap-card{background:var(--ink);color:var(--white);border-radius:2px;box-shadow:none}
+          .gap-card h3{font-family:'Space Grotesk',sans-serif}
+          .gap-card p{color:#C9CBD0}
+          .evidence span{border-radius:2px}
+          .gap-btn{border-radius:2px;box-shadow:none}
+          .workflow,.cap,.compare,.gap-section{border-color:var(--paper-line)}
+          .step{border-color:var(--paper-line)}
+          .step-num{color:var(--indigo)}
+          .step-tag{color:var(--graphite)}
+          .cap-card{border-radius:2px}
+          .cap-card:hover{transform:none;box-shadow:none;border-color:var(--indigo)}
+          .cap-icon{border-radius:2px;color:var(--indigo);border-color:var(--paper-line)}
+          .paper.selected{box-shadow:inset 3px 0 var(--highlighter)}
+          .compare-panel{border-radius:2px}
+          .row{border-color:var(--paper-line)}
+          .row span:first-child{color:var(--graphite)}
+          .finalbox{border-radius:2px}
+          .footer{border-color:var(--paper-line);color:var(--graphite)}
+          .toast{background:var(--ink);color:var(--white);border-radius:2px}
+          </style>'''
+
+          html = re.sub(r'<style id="synapse-visual-system">.*?</style>', '', html, flags=re.S)
+          html = html.replace('</head>', css + '\n</head>', 1)
+          path.write_text(html, encoding='utf-8')
+          PY
+      - name: Commit index styling update
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add index.html
+          git diff --cached --quiet && exit 0
+          git commit -m "chore: apply index visual system"
+          git push
