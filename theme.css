@@ -4,3 +4,16 @@
 /* Full-width navigation bar; content stays aligned to the main 1180px grid. */
 .nav{width:100%!important;max-width:none!important;margin-left:0!important;margin-right:0!important;padding-left:max(22px,calc((100% - 1180px)/2))!important;padding-right:max(22px,calc((100% - 1180px)/2))!important}
 @media(max-width:800px){.nav{padding-left:14px!important;padding-right:14px!important}}
+
+/* Field-map emphasis: separate the interactive research canvas from the page grid. */
+.window{border:1px solid #BDBAAB!important;background:var(--white)!important;overflow:hidden!important}
+.windowbar{background:#F2F1E9!important;border-bottom:1px solid #BDBAAB!important}
+.graph{background-color:#FAFAF6!important;background-image:linear-gradient(#C9C6B8 1px,transparent 1px),linear-gradient(90deg,#C9C6B8 1px,transparent 1px)!important;background-size:28px 28px!important;border-right:1px solid #BDBAAB!important}
+.graph:after{content:"";position:absolute;inset:0;pointer-events:none;border:1px solid rgba(59,47,201,.10);z-index:1}
+.edge{background:#77786F!important;opacity:.8!important}
+.edge.hot{background:var(--indigo)!important;opacity:1!important}
+.node{background:#FFFFFF!important;border:1px solid #B7B5AA!important;color:var(--ink)!important;z-index:3!important}
+.node:hover{border-color:var(--indigo)!important;box-shadow:0 0 0 2px rgba(59,47,201,.12),inset 0 -3px var(--highlighter)!important}
+.node.active{background:#F3F5DD!important;border:1.5px solid var(--indigo)!important;box-shadow:0 0 0 3px rgba(59,47,201,.12),inset 0 -4px var(--highlighter)!important}
+.node.b{border-left:3px solid #3B2FC9!important}.node.c{border-left:3px solid #E83E8C!important}.node.d{border-left:3px solid #2E86DE!important}.node.e{border-left:3px solid #6C4AC9!important}.node.f{border-left:3px solid #F28C00!important}.node.g{border-left:3px solid #12A89D!important}
+.side{background:#FAFAF6!important}
